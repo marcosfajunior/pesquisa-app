@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Bolão Campeonato Brasileiro</title>
+    
+    <!-- Bootstrap 5 CSS + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- CSS personalizado Versionamento -->
+    <link rel="stylesheet" href="style.css?v=4.6">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Header Fixo -->
+    <header class="header-fixo fixed-top bg-white shadow-sm border-bottom">
+        <div class="container py-2">
+            <div class="text-center">
+                <h5 class="mb-1 fw-bold text-dark" id="nome-bolao"></h5>
+                
+                <div id="area-rodada-header" class="mb-1">
+                    <p class="mb-0 fw-bold text-primary" id="numero-rodada"></p>
+                </div>
+                
+                <div id="datas-rodada-container" class="small">
+                    <div class="mb-1">
+                        <i class="bi bi-calendar text-secondary"></i> 
+                        Início da rodada: <span class="fw-semibold text-dark" id="data-inicio"></span>
+                    </div>
+                    <div>
+                        <i class="bi bi-clock text-secondary"></i> 
+                        Limite para envio dos palpites: <span class="fw-semibold text-dark" id="data-limite"></span>
+                    </div>
+                </div>
+                
+                <!-- Barra de Progresso -->
+                <div class="progresso-palpites-header d-none mt-3">
+                    <div class="barra-progresso-com-bolinha mx-auto" style="max-width: 400px;">
+                        <div class="position-relative">
+                            <div class="text-center mb-1">
+                                <span class="fw-bold text-dark" id="header-texto-barra">0 de 0 (0%)</span>
+                            </div>
+                            
+                            <div class="progress-container position-relative">
+                                <div class="barra-faixa position-absolute top-50 start-0 end-0 translate-middle-y" 
+                                     style="height: 6px; background-color: #e9ecef; border-radius: 3px;">
+                                </div>
+                                
+                                <div class="barra-progresso position-absolute top-50 start-0 translate-middle-y" 
+                                     id="header-barra-progresso-palpites"
+                                     style="height: 6px; width: 0%; border-radius: 3px 0 0 3px;">
+                                </div>
+                                
+                                <div class="bola-futebol position-absolute top-50 translate-middle-y d-flex align-items-center justify-content-center" 
+                                     id="bola-futebol"
+                                     style="left: 0%;">
+                                    <span class="bola-emoji">⚽</span>
+                                </div>
+                                
+                                <div class="marcadores-bar position-absolute top-50 start-0 end-0 translate-middle-y d-flex justify-content-between">
+                                    <div class="marcador inicio" style="width: 1px; height: 10px; background-color: #adb5bd;"></div>
+                                    <div class="marcador fim" style="width: 1px; height: 10px; background-color: #adb5bd;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-1 small text-muted">
+                                <span>0%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-dinamico flex-grow-1">
+        <div class="container py-4">
+            <!-- Tela 1: Identificação -->
+            <div id="tela-participante" class="tela">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <div class="card shadow border-0">
+                            <div class="card-header bg-dark text-white">
+                                <h4 class="mb-0">
+                                    <i class="bi bi-person-badge"></i> 
+                                    Identificação - <span id="rodada-tela-participante"></span>
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <!-- ALERTAS - APENAS CONTAINERS -->
+                                <div id="alert-rodada-diferente" class="alert alert-warning d-none"></div>
+                                <div id="alert-dados-enviados" class="alert alert-info d-none"></div>
+                                <div id="alert-erro-envio" class="alert alert-danger d-none"></div>
+                                <div id="alert-prazo-expirado" class="alert alert-warning d-none"></div>
+                                
+                                <!-- FORMULÁRIO INICIAL -->
+                                <div id="formulario-inicial" class="d-none">
+                                    <form id="formParticipante">
+                                        <div class="mb-3">
+                                            <label for="nomeParticipante" class="form-label fw-bold">
+                                                <i class="bi bi-person"></i> Selecione seu nome:
+                                            </label>
+                                            <select class="form-select form-select-lg" id="nomeParticipante" required>
+                                                <option value="">-- Selecione --</option>
+                                                <option value="DANIEL ALMEIDA">DANIEL ALMEIDA</option>
+                                                <option value="DANIEL PENA">DANIEL PENA</option>
+                                                <option value="GABRIEL CAMBRAIA">GABRIEL CAMBRAIA</option>
+                                                <option value="JOSÉ CARLOS">JOSÉ CARLOS</option>
+                                                <option value="JÚLIO CÉSAR">JÚLIO CÉSAR</option>
+                                                <option value="LUIZ GUSTAVO">LUIZ GUSTAVO</option>
+                                                <option value="MARCELO ASSIS">MARCELO ASSIS</option>
+                                                <option value="MARCOS FERREIRA">MARCOS FERREIRA</option>
+                                                <option value="NÉLIO MENIGHIN">NÉLIO MENIGHIN</option>
+                                                <option value="PAULO EDUARDO">PAULO EDUARDO</option>
+                                                <option value="PAULO SILVA">PAULO SILVA</option>
+                                                <option value="TIAGO SILVA">TIAGO SILVA</option>
+                                                <option value="VICTOR HUGO">VICTOR HUGO</option>
+                                                <option value="WESCLEY GALDINO">WESCLEY GALDINO</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-lg w-100" id="btn-inserir-palpites">
+                                            <i class="bi bi-target"></i> Inserir Palpites
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tela 2: Palpites -->
+            <div id="tela-palpites" class="tela d-none">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <div class="card shadow border-0">
+                            <div class="card-header bg-dark text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="mb-0" id="titulo-tela-palpites">
+                                        <i class="bi bi-pencil"></i> 
+                                        Seus Palpites - <span id="rodada-tela-palpites"></span>
+                                    </h4>
+                                    <div>
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-person"></i> 
+                                            <span id="participante-atual"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="formPalpites">
+                                    <div id="jogos-container" class="row g-3"></div>
+                                </form>
+                            </div>
+                            <div class="card-footer bg-light">
+                                <button type="submit" form="formPalpites" class="btn btn-success btn-lg w-100" id="btn-salvar-palpites">
+                                    <i class="bi bi-save"></i> Salvar e Enviar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tela 3: Conclusão -->
+            <div id="tela-conclusao" class="tela d-none">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <div class="card shadow border-0">
+                            <div class="card-header bg-success text-white text-center">
+                                <h4 class="mb-0">
+                                    <i class="bi bi-clipboard-check"></i> 
+                                    Seus Palpites - <span id="rodada-tela-conclusao"></span>
+                                </h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <!-- ALERTAS - APENAS CONTAINERS -->
+                                <div id="alert-prazo-expirado-conclusao" class="alert alert-warning d-none"></div>
+                                
+                                <div id="conteudo-normal-conclusao">
+                                    <div id="alert-sem-internet-conclusao" class="alert alert-info d-none mb-3"></div>
+                                    <div id="alert-envio-sucesso-conclusao" class="alert alert-success d-none mb-3"></div>
+                                    
+                                    <h5 class="mb-3">
+                                        <i class="bi bi-check2-circle text-success"></i> 
+                                        Seus palpites estão prontos!
+                                    </h5>
+                                    <p class="text-muted mb-4">
+                                        Aqui você pode visualizar, editar ou compartilhar seus palpites.
+                                    </p>
+
+                                    <div class="d-grid gap-2 mb-4">
+                                        <button class="btn btn-outline-primary" id="btn-editar-palpites">
+                                            <i class="bi bi-pencil"></i> Editar Palpites
+                                        </button>
+                                        <button class="btn btn-info" id="btn-compartilhar-csv">
+                                            <i class="bi bi-share"></i> Compartilhar CSV
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="container-limpar-conclusao" class="mt-4 pt-3 border-top">
+                                    <button class="btn btn-danger w-100 mb-2" id="btn-limpar-dados-conclusao">
+                                        <i class="bi bi-trash"></i> Limpar Dados do Dispositivo
+                                    </button>
+                                    <small class="text-muted d-block">
+                                        <i class="bi bi-lightbulb"></i> Após limpar, os palpites não serão recuperados!
+                                    </small>
+                                    <small class="text-muted d-block mt-1">
+                                        Está em dúvida se enviou os palpites, entre em contato com o organizador.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tela 4: Exportação -->
+            <div id="tela-exportacao" class="tela d-none">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <div class="card shadow border-0">
+                            <div class="card-header bg-success text-white text-center">
+                                <h4 class="mb-0">
+                                    <i class="bi bi-graph-up"></i> 
+                                    Compartilhamento Concluído! - <span id="rodada-tela-exportacao"></span>
+                                </h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="mb-4 display-1 text-success">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <h5>Dados Compartilhados com Sucesso!</h5>
+                                <p class="text-muted mb-4">Arquivo CSV compartilhado no seu dispositivo</p>
+                                
+                                <button class="btn btn-success btn-lg w-100" id="btn-voltar-conclusao">
+                                    <i class="bi bi-arrow-left"></i> Voltar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tela 5: Envio Google Forms -->
+            <div id="tela-envio-google" class="tela d-none">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <div class="card shadow border-0">
+                            <div class="card-header bg-dark text-white">
+                                <h4 class="mb-0">
+                                    <i class="bi bi-send"></i> 
+                                    Enviando os Palpites - <span id="rodada-tela-envio"></span>
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="progresso-envio">
+                                    <div class="progress" style="height: 30px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                             id="barra-progresso-envio" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-center mt-2 fw-bold" id="texto-progresso-envio">Enviando 0 de 0</p>
+                                </div>
+                                
+                                <div id="resultado-envio" class="d-none"></div>
+                                
+                                <button id="btn-fechar-envio-internet" class="btn btn-primary w-100 d-none mt-3">
+                                    <i class="bi bi-check-circle"></i> Fechar
+                                </button>
+                                
+                                <button id="btn-fechar-envio-sucesso" class="btn btn-success w-100 d-none mt-3">
+                                    <i class="bi bi-check-circle"></i> Fechar
+                                </button>
+                                
+                                <button id="btn-reiniciar-envio" class="btn btn-warning w-100 d-none mt-2">
+                                    <i class="bi bi-arrow-clockwise"></i> Reiniciar Envio
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botão Flutuante do WhatsApp -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/5532999825627?text=Olá!%20Preciso%20de%20ajuda%20com%20o%20Bolão%20do%20Campeonato%20Brasileiro." 
+           target="_blank" 
+           class="whatsapp-btn"
+           aria-label="Suporte via WhatsApp">
+            <i class="bi bi-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript personalizado Versionamento -->
+    <script src="app.js?v=4.6"></script>
+</body>
+</html>
