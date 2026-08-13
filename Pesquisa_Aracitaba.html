@@ -574,7 +574,7 @@
         <div class="container">
             <div class="info-pesquisa text-center">
                 <h4 class="mb-1">📊 Pesquisa de Opinião Pública</h4>
-                <p class="mb-2">Aracitaba-MG</p>
+                <p class="mb-2">Barbacena-MG</p>
                 
                 <!-- Estatísticas de Entrevistas -->
                 <div class="dashboard-entrevistas mb-3">
@@ -1131,11 +1131,14 @@
                 pergunta: "LOCALIDADE EM QUE RESIDE",
                 tipo: "radio",
                 opcoes: [
-                    { texto: "Bairro Campestre ou N.S. Lourdes", value: "1A" },
-                    { texto: "Centro / Rua do Sapé", value: "1B" },
-                    { texto: "Região 01 - Caititu / Fazenda Fortuna / Vargem", value: "1C" },
-                    { texto: "Região 02 - Bentos / Cantarinos / São Domingos / Barra Mansa", value: "1D" },
-                    { texto: "Região 03 - Chorão / Capivari", value: "1E" }
+                    { texto: "Centro", value: "1A" },
+                    { texto: "Rua da Palha e Cabeleira", value: "1B" },
+                    { texto: "Alto do Morro", value: "1C" },
+                    { texto: "Região da Rua do Sapo ou Morro da Rua do Sapo", value: "1D" },
+                    { texto: "Engenho / Porteira Nova", value: "1E" },
+                    { texto: "Vermelho", value: "1F" },
+                    { texto: "Paraíso Garcia / Casa Branca / Almeidas / Alto dos Bambus", value: "1G" },
+                    { texto: "Moreiras", value: "1H" }
                 ],
                 obrigatoria: true
             },
@@ -1365,6 +1368,7 @@
 
         function preencherSelectEntrevistas() {
             const select = document.getElementById('totalEntrevistas');
+            // 🔧 CORREÇÃO: Sempre inicia com a opção vazia selecionada
             select.innerHTML = '<option value="">Selecione...</option>';
             
             for (let i = 1; i <= 100; i++) {
@@ -1373,6 +1377,9 @@
                 option.textContent = i;
                 select.appendChild(option);
             }
+            
+            // 🔧 GARANTIR que o select fique com a opção vazia selecionada
+            select.value = '';
         }
 
         function carregarDadosSalvos() {
@@ -1394,6 +1401,11 @@
                         atualizarDashboard();
                     } else {
                         mostrarTela('tela-config-entrevistas');
+                        // 🔧 CORREÇÃO: Garantir que o select fique vazio ao mostrar a tela
+                        const selectEntrevistas = document.getElementById('totalEntrevistas');
+                        if (selectEntrevistas) {
+                            selectEntrevistas.value = '';
+                        }
                     }
                 }
             }
@@ -1508,6 +1520,12 @@
 
         function configurarEntrevistas() {
             const totalEntrevistas = parseInt(document.getElementById('totalEntrevistas').value);
+            
+            // 🔧 CORREÇÃO: Verificar se o usuário selecionou uma opção válida
+            if (!totalEntrevistas || totalEntrevistas <= 0) {
+                alert('Por favor, selecione a quantidade de entrevistas que você vai fazer.');
+                return;
+            }
             
             dadosApp.totalEntrevistas = totalEntrevistas;
             dadosApp.entrevistasRealizadas = 0;
@@ -1901,6 +1919,12 @@
             mostrarTela('tela-config-entrevistas');
             atualizarDashboardHeader();
             atualizarVisibilidadeBotoes();
+            
+            // 🔧 CORREÇÃO: Garantir que o select fique vazio ao voltar para configuração
+            const selectEntrevistas = document.getElementById('totalEntrevistas');
+            if (selectEntrevistas) {
+                selectEntrevistas.value = '';
+            }
         }
 
         function mostrarTela(telaId) {
@@ -1939,6 +1963,14 @@
                 document.getElementById('resultado-envio').classList.add('d-none');
                 document.getElementById('progresso-envio').classList.add('d-none');
                 document.getElementById('btn-google-forms').disabled = false;
+            }
+            
+            // 🔧 CORREÇÃO: Se for a tela de configuração, garantir que o select fique vazio
+            if (telaId === 'tela-config-entrevistas') {
+                const selectEntrevistas = document.getElementById('totalEntrevistas');
+                if (selectEntrevistas) {
+                    selectEntrevistas.value = '';
+                }
             }
             
             atualizarDashboardHeader();
