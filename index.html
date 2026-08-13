@@ -51,6 +51,7 @@
             background: linear-gradient(135deg, #2c3e50, #3498db);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header p {
@@ -77,7 +78,7 @@
         .pesquisa-item {
             display: flex;
             align-items: center;
-            gap: 16px;
+            justify-content: space-between;
             background: #f8f9fa;
             border: 1px solid #e9ecef;
             border-radius: 16px;
@@ -85,29 +86,28 @@
             text-decoration: none;
             color: #212529;
             transition: all 0.25s ease;
-            position: relative;
+            cursor: pointer;
         }
 
-        .pesquisa-item:hover {
+        .pesquisa-item:hover:not(.inativo) {
             background: #ffffff;
             border-color: #2c3e50;
             box-shadow: 0 8px 25px rgba(44, 62, 80, 0.12);
             transform: translateX(6px);
         }
 
-        .pesquisa-item:active {
+        .pesquisa-item:active:not(.inativo) {
             transform: scale(0.98);
         }
 
-        .pesquisa-icon {
-            font-size: 28px;
-            flex-shrink: 0;
-            width: 48px;
-            text-align: center;
+        .pesquisa-item.inativo {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
-        .pesquisa-info {
-            flex: 1;
+        .pesquisa-item.inativo:hover {
+            transform: none;
+            box-shadow: none;
         }
 
         .pesquisa-info .nome {
@@ -116,25 +116,34 @@
             color: #1a1a2e;
         }
 
-        .pesquisa-info .descricao {
-            font-size: 14px;
-            color: #6c7a8a;
+        .pesquisa-info .periodo {
+            font-size: 13px;
+            color: #8a9aa8;
             margin-top: 2px;
         }
 
         .pesquisa-badge {
-            background: #2c3e50;
             color: white;
             font-size: 11px;
             font-weight: 600;
-            padding: 4px 12px;
+            padding: 4px 14px;
             border-radius: 20px;
             letter-spacing: 0.3px;
             flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .pesquisa-badge.ativo {
             background: #28a745;
+        }
+
+        .pesquisa-badge.finalizada {
+            background: #6c757d;
+        }
+
+        .pesquisa-badge.futura {
+            background: #ffc107;
+            color: #212529;
         }
 
         .footer {
@@ -168,11 +177,7 @@
             .pesquisa-item {
                 padding: 14px 16px;
                 flex-wrap: wrap;
-            }
-
-            .pesquisa-icon {
-                font-size: 22px;
-                width: 40px;
+                gap: 8px;
             }
 
             .pesquisa-info .nome {
@@ -182,6 +187,142 @@
             .pesquisa-badge {
                 font-size: 10px;
                 padding: 3px 10px;
+            }
+        }
+
+        /* ============================================ */
+        /* 🎨 ESTILOS DO MODAL */
+        /* ============================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.ativo {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            max-width: 420px;
+            width: 90%;
+            padding: 32px 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            text-align: center;
+        }
+
+        .modal-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .modal h3 {
+            font-size: 22px;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .modal p {
+            font-size: 15px;
+            color: #6c7a8a;
+            line-height: 1.6;
+            margin-bottom: 6px;
+        }
+
+        .modal .periodo-destaque {
+            background: #f0f2f5;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: inline-block;
+            margin: 8px 0 16px 0;
+            font-size: 14px;
+        }
+
+        .modal-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .modal-btn:hover {
+            background: #1a252f;
+            transform: scale(1.02);
+        }
+
+        .modal-btn:active {
+            transform: scale(0.96);
+        }
+
+        .modal-btn.finalizada-btn {
+            background: #6c757d;
+        }
+
+        .modal-btn.finalizada-btn:hover {
+            background: #5a6268;
+        }
+
+        .modal-btn.futura-btn {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .modal-btn.futura-btn:hover {
+            background: #e0a800;
+        }
+
+        /* Animações do Modal */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal {
+                padding: 24px 20px;
+            }
+
+            .modal-icon {
+                font-size: 44px;
+            }
+
+            .modal h3 {
+                font-size: 19px;
+            }
+
+            .modal p {
+                font-size: 14px;
             }
         }
     </style>
@@ -198,29 +339,235 @@
             🗂️ Formulários disponíveis
         </div>
 
-        <div class="pesquisa-list">
-            <!-- Pesquisa Aracitaba -->
-            <a href="Pesquisa_Aracitaba.html" class="pesquisa-item">
-                <div class="pesquisa-info">
-                    <div class="nome">Aracitaba-MG</div>
-                </div>
-                <span class="pesquisa-badge ativo">Ativo</span>
-            </a>
-
-            <!-- Pesquisa Santa Rita de Ibitipoca -->
-            <a href="Pesquisa_Santa_Rita_de_Ibitipoca.html" class="pesquisa-item">
-                <div class="pesquisa-info">
-                    <div class="nome">Santa Rita de Ibitipoca-MG</div>
-                </div>
-                <span class="pesquisa-badge ativo">Ativo</span>
-            </a>
-
+        <div class="pesquisa-list" id="pesquisa-list">
+            <!-- As pesquisas serão carregadas dinamicamente pelo JavaScript -->
         </div>
 
         <div class="footer">
             <p>Sistema de Pesquisas · <a href="https://github.com/marcosfajunior/pesquisa-app" target="_blank">GitHub</a></p>
         </div>
     </div>
+
+    <!-- ============================================ -->
+    <!-- 🎨 MODAL -->
+    <!-- ============================================ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-icon" id="modalIcon">🔴</div>
+            <h3 id="modalTitulo">Pesquisa Finalizada</h3>
+            <p id="modalDescricao">Esta pesquisa já foi concluída e não está mais disponível para coleta de dados.</p>
+            <div class="periodo-destaque" id="modalPeriodo">📅 13/08/2026</div>
+            <button class="modal-btn" id="modalBtn" onclick="fecharModal()">Entendi</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // 📋 CONFIGURAÇÃO DAS PESQUISAS
+        // ============================================
+        const pesquisas = [
+            {
+                id: 'aracitaba',
+                nome: 'Aracitaba-MG',
+                arquivo: 'Pesquisa_Aracitaba.html',
+                dataInicio: '2026-08-13',
+                dataFim: '2026-08-13'
+            },
+            {
+                id: 'santa_rita',
+                nome: 'Santa Rita de Ibitipoca-MG',
+                arquivo: 'Pesquisa_Santa_Rita_de_Ibitipoca.html',
+                dataInicio: '2026-08-14',
+                dataFim: '2026-08-15'
+            },
+            {
+                id: 'barbacena',
+                nome: 'Barbacena-MG',
+                arquivo: 'Pesquisa_Barbacena.html',
+                dataInicio: '2026-08-13',
+                dataFim: '2026-08-13'
+            },
+            {
+                id: 'juiz_de_fora',
+                nome: 'Juiz de Fora-MG',
+                arquivo: 'Pesquisa_Juiz_de_Fora.html',
+                dataInicio: '2026-08-10',
+                dataFim: '2026-08-10'
+            },
+            // =============================================
+            // 👇 Adicione novas pesquisas abaixo deste ponto
+            // =============================================
+            // {
+            //     id: 'nova_cidade',
+            //     nome: 'Nova Cidade-MG',
+            //     arquivo: 'Pesquisa_Nova_Cidade.html',
+            //     dataInicio: '2026-08-20',
+            //     dataFim: '2026-08-20'
+            // },
+        ];
+
+        // ============================================
+        // 🔍 FUNÇÃO PARA VERIFICAR STATUS DA PESQUISA
+        // ============================================
+        function getStatusPesquisa(dataInicio, dataFim) {
+            const hoje = new Date();
+            const hojeStr = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+            
+            if (hojeStr < dataInicio) {
+                return 'futura';
+            }
+            if (hojeStr > dataFim) {
+                return 'finalizada';
+            }
+            return 'ativa';
+        }
+
+        // ============================================
+        // 📝 FUNÇÃO PARA FORMATAR DATA PARA EXIBIÇÃO
+        // ============================================
+        function formatarData(dataStr) {
+            const partes = dataStr.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        // ============================================
+        // 🎨 FUNÇÕES DO MODAL
+        // ============================================
+        function abrirModal(tipo, nome, dataInicio, dataFim) {
+            const overlay = document.getElementById('modalOverlay');
+            const icon = document.getElementById('modalIcon');
+            const titulo = document.getElementById('modalTitulo');
+            const descricao = document.getElementById('modalDescricao');
+            const periodo = document.getElementById('modalPeriodo');
+            const btn = document.getElementById('modalBtn');
+
+            const periodoTexto = dataInicio === dataFim 
+                ? formatarData(dataInicio) 
+                : `${formatarData(dataInicio)} a ${formatarData(dataFim)}`;
+
+            if (tipo === 'finalizada') {
+                icon.textContent = '🔴';
+                titulo.textContent = 'Pesquisa Finalizada';
+                descricao.textContent = `A pesquisa "${nome}" já foi concluída e não está mais disponível para coleta de dados.`;
+                btn.className = 'modal-btn finalizada-btn';
+                btn.textContent = 'Entendi';
+            } else if (tipo === 'futura') {
+                icon.textContent = '🟡';
+                titulo.textContent = 'Pesquisa em Breve';
+                descricao.textContent = `A pesquisa "${nome}" ainda não começou. Aguarde a data de início para participar.`;
+                btn.className = 'modal-btn futura-btn';
+                btn.textContent = 'Entendi';
+            }
+
+            periodo.textContent = `📅 ${periodoTexto}`;
+            overlay.classList.add('ativo');
+        }
+
+        function fecharModal() {
+            document.getElementById('modalOverlay').classList.remove('ativo');
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+
+        // Fechar modal com tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                fecharModal();
+            }
+        });
+
+        // ============================================
+        // 🚀 FUNÇÃO PARA RENDERIZAR A LISTA DE PESQUISAS
+        // ============================================
+        function renderizarPesquisas() {
+            const container = document.getElementById('pesquisa-list');
+            container.innerHTML = '';
+
+            // 🔄 ADICIONAR STATUS A CADA PESQUISA
+            const pesquisasComStatus = pesquisas.map(pesquisa => {
+                const status = getStatusPesquisa(pesquisa.dataInicio, pesquisa.dataFim);
+                return {
+                    ...pesquisa,
+                    status: status
+                };
+            });
+
+            // 📊 ORDENAÇÃO HIERÁRQUICA
+            const ordemStatus = { 'ativa': 0, 'futura': 1, 'finalizada': 2 };
+
+            pesquisasComStatus.sort((a, b) => {
+                if (ordemStatus[a.status] !== ordemStatus[b.status]) {
+                    return ordemStatus[a.status] - ordemStatus[b.status];
+                }
+                if (a.dataInicio !== b.dataInicio) {
+                    return a.dataInicio.localeCompare(b.dataInicio);
+                }
+                return a.nome.localeCompare(b.nome);
+            });
+
+            // 🎨 RENDERIZAR CADA PESQUISA
+            pesquisasComStatus.forEach(pesquisa => {
+                const status = pesquisa.status;
+
+                let badgeText = '';
+                let badgeClass = '';
+                let isInativo = false;
+
+                switch (status) {
+                    case 'ativa':
+                        badgeText = '🟢 Ativo';
+                        badgeClass = 'ativo';
+                        isInativo = false;
+                        break;
+                    case 'finalizada':
+                        badgeText = '🔴 Finalizada';
+                        badgeClass = 'finalizada';
+                        isInativo = true;
+                        break;
+                    case 'futura':
+                        badgeText = '🟡 Em breve';
+                        badgeClass = 'futura';
+                        isInativo = true;
+                        break;
+                }
+
+                const link = document.createElement('a');
+                link.className = `pesquisa-item${isInativo ? ' inativo' : ''}`;
+
+                if (isInativo) {
+                    link.href = '#';
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        abrirModal(status, pesquisa.nome, pesquisa.dataInicio, pesquisa.dataFim);
+                    });
+                } else {
+                    link.href = pesquisa.arquivo;
+                }
+
+                const periodoTexto = pesquisa.dataInicio === pesquisa.dataFim 
+                    ? formatarData(pesquisa.dataInicio) 
+                    : `${formatarData(pesquisa.dataInicio)} a ${formatarData(pesquisa.dataFim)}`;
+
+                link.innerHTML = `
+                    <div class="pesquisa-info">
+                        <div class="nome">${pesquisa.nome}</div>
+                        <div class="periodo">📅 ${periodoTexto}</div>
+                    </div>
+                    <span class="pesquisa-badge ${badgeClass}">${badgeText}</span>
+                `;
+
+                container.appendChild(link);
+            });
+        }
+
+        // 🚀 INICIALIZAR
+        document.addEventListener('DOMContentLoaded', renderizarPesquisas);
+    </script>
 
 </body>
 </html>
