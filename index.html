@@ -394,6 +394,20 @@
                 dataInicio: '2026-08-10',
                 dataFim: '2026-08-10'
             },
+            {
+                id: 'sao_paulo',
+                nome: 'São Paulo-SP',
+                arquivo: 'Pesquisa_Sao_Paulo.html',
+                dataInicio: '2026-08-05',
+                dataFim: '2026-08-05'
+            },
+            {
+                id: 'rio_de_janeiro',
+                nome: 'Rio de Janeiro-RJ',
+                arquivo: 'Pesquisa_Rio_de_Janeiro.html',
+                dataInicio: '2026-08-08',
+                dataFim: '2026-08-08'
+            },
             // =============================================
             // 👇 Adicione novas pesquisas abaixo deste ponto
             // =============================================
@@ -497,17 +511,32 @@
                 };
             });
 
-            // 📊 ORDENAÇÃO HIERÁRQUICA
+            // 📊 ORDENAÇÃO HIERÁRQUICA:
+            // Ativo: data (mais próxima) → nome
+            // Em breve: data (mais próxima) → nome
+            // Finalizada: nome (alfabético) → data
             const ordemStatus = { 'ativa': 0, 'futura': 1, 'finalizada': 2 };
 
             pesquisasComStatus.sort((a, b) => {
+                // 1️⃣ Primeiro: Ordenar por status
                 if (ordemStatus[a.status] !== ordemStatus[b.status]) {
                     return ordemStatus[a.status] - ordemStatus[b.status];
                 }
-                if (a.dataInicio !== b.dataInicio) {
+
+                // 2️⃣ Segundo: Regras específicas por status
+                if (a.status === 'finalizada') {
+                    // Finalizada: ordenar por nome (alfabético) e depois data
+                    if (a.nome !== b.nome) {
+                        return a.nome.localeCompare(b.nome);
+                    }
                     return a.dataInicio.localeCompare(b.dataInicio);
+                } else {
+                    // Ativa e Em breve: ordenar por data (mais próxima) e depois nome
+                    if (a.dataInicio !== b.dataInicio) {
+                        return a.dataInicio.localeCompare(b.dataInicio);
+                    }
+                    return a.nome.localeCompare(b.nome);
                 }
-                return a.nome.localeCompare(b.nome);
             });
 
             // 🎨 RENDERIZAR CADA PESQUISA
