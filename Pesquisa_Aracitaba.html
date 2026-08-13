@@ -1,4 +1,3 @@
-<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -574,7 +573,7 @@
         <div class="container">
             <div class="info-pesquisa text-center">
                 <h4 class="mb-1">📊 Pesquisa de Opinião Pública</h4>
-                <p class="mb-2">Aracitaba-MG</p>
+                <p class="mb-2" id="cidade-pesquisa">Barbacena-MG</p>
                 
                 <!-- Estatísticas de Entrevistas -->
                 <div class="dashboard-entrevistas mb-3">
@@ -962,14 +961,228 @@
     </main>
 
     <script>
+        // ============================================================
+        // 📋 CONFIGURAÇÃO DA PESQUISA - ALTERE AQUI!
+        // ============================================================
+        const CONFIG_PESQUISA = {
+            // 🏙️ Nome da cidade (aparece no cabeçalho)
+            cidade: 'Aracitaba-MG',
+
+            // 📝 Lista de entrevistadores disponíveis
+            entrevistadores: [
+                'MARCOS FERREIRA',
+                'VICTOR HUGO'
+            ],
+            
+            // ❓ Perguntas do questionário
+            perguntas: [
+                {
+                    id: "1",
+                    pergunta: "LOCALIDADE EM QUE RESIDE",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Bairro Campestre ou N.S. Lourdes", value: "1A" },
+                        { texto: "Centro / Rua do Sapé", value: "1B" },
+                        { texto: "Região 01 - Caititu / Fazenda Fortuna / Vargem", value: "1C" },
+                        { texto: "Região 02 - Bentos / Cantarinos / São Domingos / Barra Mansa", value: "1D" },
+                        { texto: "Região 03 - Chorão / Capivari", value: "1E" }
+                    ],
+                    obrigatoria: true
+                },
+                {
+                    id: "2",
+                    pergunta: "Sexo",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Masculino", value: "2A" },
+                        { texto: "Feminino", value: "2B" }
+                    ],
+                    obrigatoria: true
+                },
+                {
+                    id: "3",
+                    pergunta: "FAIXA ETÁRIA",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "16", value: "3A" },
+                        { texto: "17", value: "3B" },
+                        { texto: "18 A 20", value: "3C" },
+                        { texto: "21 A 24", value: "3D" },
+                        { texto: "25 A 34", value: "3E" },
+                        { texto: "35 A 44", value: "3F" },
+                        { texto: "45 A 59", value: "3G" },
+                        { texto: "60 A 69", value: "3H" },
+                        { texto: "70 A 79", value: "3I" },
+                        { texto: "+ de 79", value: "3J" }
+                    ],
+                    obrigatoria: true
+                },
+                {
+                    id: "4",
+                    pergunta: "Escolaridade",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Analfabeto", value: "4A" },
+                        { texto: "Lê e Escreve", value: "4B" },
+                        { texto: "Ensino Fundamental Incompleto", value: "4C" },
+                        { texto: "Ensino Fundamental Completo", value: "4D" },
+                        { texto: "Ensino Médio Incompleto", value: "4E" },
+                        { texto: "Ensino Médio Completo", value: "4F" },
+                        { texto: "Ensino Superior Incompleto", value: "4G" },
+                        { texto: "Ensino Superior Completo", value: "4H" }
+                    ],
+                    obrigatoria: true
+                },
+                {
+                    id: "5",
+                    pergunta: "Se as eleições fossem hoje em quem você votaria para Prefeito? Resposta ESPONTÂNEA, escrever o nome conforme o entrevistado falar.",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Fausto - 13 (Vice: Paulo Reis)", value: "5A" },
+                        { texto: "Joaquim do Elcio - 10 (Vice: Kauê)", value: "5B" },
+                        { texto: "Leandro - 15 (Vice: Felício)", value: "5C" },
+                        { 
+                            texto: "Outro", 
+                            value: "5D", 
+                            especial: "input-texto",
+                            placeholder: "Digite o nome do candidato"
+                        },
+                        { texto: "Não Sabe / Ninguém / Não Tem / Não Opinou", value: "5E" }
+                    ],
+                    obrigatoria: true,
+                    cenarioIntencao: true
+                },
+                {
+                    id: "6",
+                    pergunta: "Qual é a sua avaliação para a SAÚDE pública no município?",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Ótima", value: "6A" },
+                        { texto: "Boa", value: "6B" },
+                        { texto: "Regular", value: "6C" },
+                        { texto: "Ruim", value: "6D" },
+                        { texto: "Não Opinou", value: "6E" }
+                    ],
+                    obrigatoria: true
+                },
+                {
+                    id: "7",
+                    pergunta: "Qual é a sua avaliação para a EDUCAÇÃO pública no município?",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Ótima", value: "7A" },
+                        { texto: "Boa", value: "7B" },
+                        { texto: "Regular", value: "7C" },
+                        { texto: "Ruim", value: "7D" },
+                        { texto: "Não Opinou", value: "7E" }
+                    ],
+                    obrigatoria: true
+                },
+                {
+                    id: "8",
+                    pergunta: "De forma geral, qual é a sua avaliação para a ATUAL ADMINISTRAÇÃO municipal?",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Ótima", value: "8A" },
+                        { texto: "Boa", value: "8B" },
+                        { texto: "Regular", value: "8C" },
+                        { texto: "Ruim", value: "8D" },
+                        { texto: "Não Opinou", value: "8E" }
+                    ],
+                    obrigatoria: true
+                },
+                {
+                    id: "9",
+                    pergunta: "Qual a principal necessidade, em relação a localidade onde você mora?",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Assistência Social", value: "9A" },
+                        { texto: "Calçamento / Asfalto", value: "9B" },
+                        { texto: "Esporte e Lazer", value: "9C" },
+                        { texto: "Educação", value: "9D" },
+                        { texto: "Iluminação Pública", value: "9E" },
+                        { texto: "Emprego", value: "9F" },
+                        { texto: "Infraestrutura Comercial e Industrial", value: "9G" },
+                        { texto: "Limpeza Pública", value: "9H" },
+                        { texto: "Saneamento Básico", value: "9I" },
+                        { texto: "Saúde", value: "9J" },
+                        { texto: "Segurança Pública", value: "9K" },
+                        { texto: "Transporte Coletivo", value: "9L" },
+                        { texto: "Tecnologia", value: "9M" },
+                        { texto: "Sem Necessidades", value: "9N" },
+                        { texto: "Todas As Necessidades", value: "9O" },
+                        { texto: "Não Opinou", value: "9P" }
+                    ],
+                    obrigatoria: true
+                },
+                {
+                    id: "10",
+                    pergunta: "Se as eleições fossem hoje, dentre esses, em qual você votaria? DISCO BRANCO",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Fausto - 13 (Vice: Paulo Reis)", value: "10A" },
+                        { texto: "Joaquim do Elcio - 10 (Vice: Kauê)", value: "10B" },
+                        { texto: "Leandro - 15 (Vice: Felício)", value: "10C" },
+                        { texto: "Nenhum Deles", value: "10D" },
+                        { texto: "Não Opinou", value: "10E" }
+                    ],
+                    obrigatoria: true,
+                    cenarioIntencao: true
+                },
+                {
+                    id: "11",
+                    pergunta: "Você já definiu seu voto ou ainda pode mudar até as eleições?",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Definiu", value: "11A" },
+                        { texto: "Pode Mudar", value: "11B" },
+                        { texto: "Não Opinou", value: "11C" }
+                    ],
+                    obrigatoria: true,
+                },
+                {
+                    id: "12",
+                    pergunta: "Se as eleições fossem hoje em quem você NÃO VOTARIA DE JEITO NENHUM para Prefeito? DISCO VERMELHO",
+                    tipo: "radio",
+                    opcoes: [
+                        { texto: "Fausto - 13 (Vice: Paulo Reis)", value: "12A" },
+                        { texto: "Joaquim do Elcio - 10 (Vice: Kauê)", value: "12B" },
+                        { texto: "Leandro - 15 (Vice: Felício)", value: "12C" },
+                        { texto: "Rejeita Todos", value: "12D" },
+                        { texto: "Não Opinou", value: "12E" }
+                    ],
+                    obrigatoria: true,
+                    cenarioRejeicao: true
+                },
+                {
+                    id: "13",
+                    pergunta: "Se as eleições fossem hoje em quem você votaria para Prefeito? Resposta ESPONTÂNEA, escrever o nome conforme o entrevistado falar.",
+                    tipo: "radio",
+                    opcoes: [
+                        { 
+                            texto: "Outro", 
+                            value: "13A", 
+                            especial: "input-texto",
+                            placeholder: "Digite o nome do candidato"
+                        },
+                        { texto: "Não Sabe / Ninguém / Não Tem / Não Opinou", value: "13B" }
+                    ],
+                    obrigatoria: true
+                }
+            ]
+        };
+
+        // ============================================================
+        // 🚀 INICIALIZAÇÃO - NÃO ALTERE DAQUI PARA BAIXO
+        // ============================================================
+
         // Dados da aplicação
         let dadosApp = {
             entrevistador: '',
             totalEntrevistas: 0,
             entrevistasRealizadas: 0,
             entrevistasSalvas: [],
-            // NOVO: Controle de envios para Google Forms
-            enviosRealizados: {} // { timestamp_entrevista: true }
+            enviosRealizados: {}
         };
 
         // Array para armazenar candidatos selecionados em cenários de intenção
@@ -979,7 +1192,6 @@
         const CONFIG_GOOGLE_FORMS = {
             url: 'https://docs.google.com/forms/d/1gZSPeG5moRvzF82agYxfIRFL0TiR99yjobmT5MqkFb8/formResponse',
             
-            // 🎯 LISTA DE ENTRY IDs (35 ENTRIES)
             entryIds: [
                 'entry.3647880', 'entry.748521648', 'entry.1706514374',
                 'entry.1522151029', 'entry.614617609', 'entry.1184141247',
@@ -996,17 +1208,15 @@
             ]
         };
 
-        // 🕒 FUNÇÃO PARA FORMATAR DATA/HORA NO FORMATO dd/mm/aaaa - hh:mm:ss
+        // 🕒 FUNÇÃO PARA FORMATAR DATA/HORA
         function formatarDataHora() {
             const agora = new Date();
-            
             const dia = String(agora.getDate()).padStart(2, '0');
             const mes = String(agora.getMonth() + 1).padStart(2, '0');
             const ano = agora.getFullYear();
             const horas = String(agora.getHours()).padStart(2, '0');
             const minutos = String(agora.getMinutes()).padStart(2, '0');
             const segundos = String(agora.getSeconds()).padStart(2, '0');
-            
             return `${dia}/${mes}/${ano} - ${horas}:${minutos}:${segundos}`;
         }
 
@@ -1027,11 +1237,9 @@
             const enviadas = Object.keys(dadosApp.enviosRealizados).length;
             const naoEnviadas = totalEntrevistas - enviadas;
             
-            // Atualizar interface - tela Configurar Entrevistas
             document.getElementById('total-enviadas').textContent = enviadas;
             document.getElementById('total-pendentes-geral').textContent = naoEnviadas;
             
-            // Atualizar interface - tela Exportação Google
             if (document.getElementById('total-ja-enviadas')) {
                 document.getElementById('total-ja-enviadas').textContent = enviadas;
             }
@@ -1042,9 +1250,7 @@
                 document.getElementById('total-exportar').textContent = totalEntrevistas;
             }
             
-            // Atualizar visibilidade dos botões
             atualizarVisibilidadeBotoes();
-            
             return { total: totalEntrevistas, enviadas, naoEnviadas };
         }
 
@@ -1053,23 +1259,13 @@
             const containerEnviar = document.getElementById('container-enviar-servidor');
             const containerExportar = document.getElementById('container-exportar-dados');
             
-            // Verificar se há dados no localStorage
             const dadosSalvos = localStorage.getItem('sistemaPesquisas');
             const temDadosLocalStorage = dadosSalvos !== null;
             
-            // Verificar se há entrevistas pendentes de envio
             const totalEntrevistas = dadosApp.entrevistasSalvas.length;
             const enviadas = Object.keys(dadosApp.enviosRealizados).length;
             const temEntrevistasPendentes = totalEntrevistas > enviadas;
             
-            console.log('📊 Atualizando visibilidade dos botões:', {
-                temDadosLocalStorage,
-                totalEntrevistas,
-                enviadas,
-                temEntrevistasPendentes
-            });
-            
-            // Botão "Enviar para o Servidor" - visível apenas se houver entrevistas pendentes
             if (containerEnviar) {
                 if (temEntrevistasPendentes) {
                     containerEnviar.classList.remove('d-none');
@@ -1078,7 +1274,6 @@
                 }
             }
             
-            // Botão "Exportar Dados Coletados" - visível apenas se houver dados no localStorage
             if (containerExportar) {
                 if (temDadosLocalStorage && totalEntrevistas > 0) {
                     containerExportar.classList.remove('d-none');
@@ -1088,244 +1283,45 @@
             }
         }
 
-        // 🎯 FUNÇÃO PARA OBTER ENTRY ID AUTOMATICAMENTE
+        // 🎯 FUNÇÃO PARA OBTER ENTRY ID
         function obterEntryId(perguntaId) {
-            const totalPerguntas = modeloPerguntas.length;
+            const totalPerguntas = CONFIG_PESQUISA.perguntas.length;
             
-            console.log(`🔍 BUSCANDO ENTRY ID: Pergunta ${perguntaId}, Total perguntas: ${totalPerguntas}`);
-            
-            // Se for uma pergunta normal (1-13)
             if (perguntaId >= '1' && perguntaId <= '35') {
                 const index = parseInt(perguntaId) - 1;
-                console.log(`🔍 Índice calculado: ${index}`);
-                
                 if (index < CONFIG_GOOGLE_FORMS.entryIds.length) {
-                    const entryId = CONFIG_GOOGLE_FORMS.entryIds[index];
-                    console.log(`✅ MAPEAMENTO ENCONTRADO: Pergunta ${perguntaId} → Entry[${index}]: ${entryId}`);
-                    return entryId;
-                } else {
-                    console.log(`❌ Índice ${index} fora do range dos Entry IDs`);
+                    return CONFIG_GOOGLE_FORMS.entryIds[index];
                 }
             }
             
-            // Se for um campo especial
             if (perguntaId === 'data_hora_entrevista') {
-                const entryId = CONFIG_GOOGLE_FORMS.entryIds[totalPerguntas];
-                console.log(`✅ Data/Hora → Entry[${totalPerguntas}]: ${entryId}`);
-                return entryId;
+                return CONFIG_GOOGLE_FORMS.entryIds[totalPerguntas];
             }
             if (perguntaId === 'nome_entrevistador') {
-                const entryId = CONFIG_GOOGLE_FORMS.entryIds[totalPerguntas + 1];
-                console.log(`✅ Entrevistador → Entry[${totalPerguntas + 1}]: ${entryId}`);
-                return entryId;
+                return CONFIG_GOOGLE_FORMS.entryIds[totalPerguntas + 1];
             }
             
-            console.log(`❌ Entry ID não encontrado para: ${perguntaId}`);
             return null;
         }
-
-        // Modelo de perguntas (COMPLETAMENTE DINÂMICO)
-        const modeloPerguntas = [
-            {
-                id: "1",
-                pergunta: "LOCALIDADE EM QUE RESIDE",
-                tipo: "radio",
-                opcoes: [
-                { texto: "Bairro Campestre ou N.S. Lourdes", value: "1A" },
-                    { texto: "Centro / Rua do Sapé", value: "1B" },
-                    { texto: "Região 01 - Caititu / Fazenda Fortuna / Vargem", value: "1C" },
-                    { texto: "Região 02 - Bentos / Cantarinos / São Domingos / Barra Mansa", value: "1D" },
-                    { texto: "Região 03 - Chorão / Capivari", value: "1E" }
-                ],
-                obrigatoria: true
-            },
-            {
-                id: "2",
-                pergunta: "Sexo",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Masculino", value: "2A" },
-                    { texto: "Feminino", value: "2B" }
-                ],
-                obrigatoria: true
-            },
-            {
-                id: "3",
-                pergunta: "FAIXA ETÁRIA",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "16", value: "3A" },
-                    { texto: "17", value: "3B" },
-                    { texto: "18 A 20", value: "3C" },
-                    { texto: "21 A 24", value: "3D" },
-                    { texto: "25 A 34", value: "3E" },
-                    { texto: "35 A 44", value: "3F" },
-                    { texto: "45 A 59", value: "3G" },
-                    { texto: "60 A 69", value: "3H" },
-                    { texto: "70 A 79", value: "3I" },
-                    { texto: "+ de 79", value: "3J" }
-                ],
-                obrigatoria: true
-            },
-            {
-                id: "4",
-                pergunta: "Escolaridade",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Analfabeto", value: "4A" },
-                    { texto: "Lê e Escreve", value: "4B" },
-                    { texto: "Ensino Fundamental Incompleto", value: "4C" },
-                    { texto: "Ensino Fundamental Completo", value: "4D" },
-                    { texto: "Ensino Médio Incompleto", value: "4E" },
-                    { texto: "Ensino Médio Completo", value: "4F" },
-                    { texto: "Ensino Superior Incompleto", value: "4G" },
-                    { texto: "Ensino Superior Completo", value: "4H" }
-                ],
-                obrigatoria: true
-            },
-            {
-                id: "5",
-                pergunta: "Se as eleições fossem hoje em quem você votaria para Prefeito? Resposta ESPONTÂNEA, escrever o nome conforme o entrevistado falar.",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Fausto - 13 (Vice: Paulo Reis)", value: "5A" },
-                    { texto: "Joaquim do Elcio - 10 (Vice: Kauê)", value: "5B" },
-                    { texto: "Leandro - 15 (Vice: Felício)", value: "5C" },
-                    { 
-                        texto: "Outro", 
-                        value: "5D", 
-                        especial: "input-texto",
-                        placeholder: "Digite o nome do candidato"
-                    },
-                    { texto: "Não Sabe / Ninguém / Não Tem / Não Opinou", value: "5E" }
-                ],
-                obrigatoria: true,
-                cenarioIntencao: true
-            },
-            {
-                id: "6",
-                pergunta: "Qual é a sua avaliação para a SAÚDE pública no município?",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Ótima", value: "6A" },
-                    { texto: "Boa", value: "6B" },
-                    { texto: "Regular", value: "6C" },
-                    { texto: "Ruim", value: "6D" },
-                    { texto: "Não Opinou", value: "6E" }
-                ],
-                obrigatoria: true
-            },
-            {
-                id: "7",
-                pergunta: "Qual é a sua avaliação para a EDUCAÇÃO pública no município?",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Ótima", value: "7A" },
-                    { texto: "Boa", value: "7B" },
-                    { texto: "Regular", value: "7C" },
-                    { texto: "Ruim", value: "7D" },
-                    { texto: "Não Opinou", value: "7E" }
-                ],
-                obrigatoria: true
-            },
-            {
-                id: "8",
-                pergunta: "De forma geral, qual é a sua avaliação para a ATUAL ADMINISTRAÇÃO municipal?",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Ótima", value: "8A" },
-                    { texto: "Boa", value: "8B" },
-                    { texto: "Regular", value: "8C" },
-                    { texto: "Ruim", value: "8D" },
-                    { texto: "Não Opinou", value: "8E" }
-                ],
-                obrigatoria: true
-            },
-            {
-                id: "9",
-                pergunta: "Qual a principal necessidade, em relação a localidade onde você mora?",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Assistência Social", value: "9A" },
-                    { texto: "Calçamento / Asfalto", value: "9B" },
-                    { texto: "Esporte e Lazer", value: "9C" },
-                    { texto: "Educação", value: "9D" },
-                    { texto: "Iluminação Pública", value: "9E" },
-                    { texto: "Emprego", value: "9F" },
-                    { texto: "Infraestrutura Comercial e Industrial", value: "9G" },
-                    { texto: "Limpeza Pública", value: "9H" },
-                    { texto: "Saneamento Básico", value: "9I" },
-                    { texto: "Saúde", value: "9J" },
-                    { texto: "Segurança Pública", value: "9K" },
-                    { texto: "Transporte Coletivo", value: "9L" },
-                    { texto: "Tecnologia", value: "9M" },
-                    { texto: "Sem Necessidades", value: "9N" },
-                    { texto: "Todas As Necessidades", value: "9O" },
-                    { texto: "Não Opinou", value: "9P" }
-                ],
-                obrigatoria: true
-            },
-            {
-                id: "10",
-                pergunta: "Se as eleições fossem hoje, dentre esses, em qual você votaria? DISCO BRANCO",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Fausto - 13 (Vice: Paulo Reis)", value: "10A" },
-                    { texto: "Joaquim do Elcio - 10 (Vice: Kauê)", value: "10B" },
-                    { texto: "Leandro - 15 (Vice: Felício)", value: "10C" },
-                    { texto: "Nenhum Deles", value: "10D" },
-                    { texto: "Não Opinou", value: "10E" }
-                ],
-                obrigatoria: true,
-                cenarioIntencao: true
-            },
-            {
-                id: "11",
-                pergunta: "Você já definiu seu voto ou ainda pode mudar até as eleições?",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Definiu", value: "11A" },
-                    { texto: "Pode Mudar", value: "11B" },
-                    { texto: "Não Opinou", value: "11C" }
-                ],
-                obrigatoria: true,
-            },
-            {
-                id: "12",
-                pergunta: "Se as eleições fossem hoje em quem você NÃO VOTARIA DE JEITO NENHUM para Prefeito? DISCO VERMELHO",
-                tipo: "radio",
-                opcoes: [
-                    { texto: "Fausto - 13 (Vice: Paulo Reis)", value: "12A" },
-                    { texto: "Joaquim do Elcio - 10 (Vice: Kauê)", value: "12B" },
-                    { texto: "Leandro - 15 (Vice: Felício)", value: "12C" },
-                    { texto: "Rejeita Todos", value: "12D" },
-                    { texto: "Não Opinou", value: "12E" }
-                ],
-                obrigatoria: true,
-                cenarioRejeicao: true
-            },
-            {
-                id: "13",
-                pergunta: "Se as eleições fossem hoje em quem você votaria para Prefeito? Resposta ESPONTÂNEA, escrever o nome conforme o entrevistado falar.",
-                tipo: "radio",
-                opcoes: [
-                    { 
-                        texto: "Outro", 
-                        value: "13A", 
-                        especial: "input-texto",
-                        placeholder: "Digite o nome do candidato"
-                    },
-                    { texto: "Não Sabe / Ninguém / Não Tem / Não Opinou", value: "13B" }
-                ],
-                obrigatoria: true
-            }
-        ];
 
         // Variável para armazenar CSV temporário
         let csvData = null;
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
+            // Aplicar configuração
+            document.getElementById('cidade-pesquisa').textContent = CONFIG_PESQUISA.cidade;
+            
+            // Preencher select de entrevistadores
+            const selectEntrevistador = document.getElementById('nomeEntrevistador');
+            selectEntrevistador.innerHTML = '<option value="">Selecione...</option>';
+            CONFIG_PESQUISA.entrevistadores.forEach(nome => {
+                const option = document.createElement('option');
+                option.value = nome;
+                option.textContent = nome;
+                selectEntrevistador.appendChild(option);
+            });
+            
             carregarDadosSalvos();
             configurarFormularios();
             preencherSelectEntrevistas();
@@ -1339,7 +1335,6 @@
         function configurarFormularios() {
             document.getElementById('formEntrevistador').addEventListener('submit', function(e) {
                 e.preventDefault();
-                // Usar o valor selecionado (já em uppercase)
                 dadosApp.entrevistador = document.getElementById('nomeEntrevistador').value;
                 salvarDados();
                 mostrarTela('tela-config-entrevistas');
@@ -1359,13 +1354,10 @@
                 finalizarEntrevista();
                 atualizarVisibilidadeBotoes();
             });
-
-            // Remover o event listener do input (não é mais necessário pois agora é um select)
         }
 
         function preencherSelectEntrevistas() {
             const select = document.getElementById('totalEntrevistas');
-            // 🔧 CORREÇÃO: Sempre inicia com a opção vazia selecionada
             select.innerHTML = '<option value="">Selecione...</option>';
             
             for (let i = 1; i <= 100; i++) {
@@ -1374,8 +1366,6 @@
                 option.textContent = i;
                 select.appendChild(option);
             }
-            
-            // 🔧 GARANTIR que o select fique com a opção vazia selecionada
             select.value = '';
         }
 
@@ -1386,7 +1376,6 @@
                 dadosApp = { ...dadosApp, ...parsed };
                 
                 if (dadosApp.entrevistador) {
-                    // Selecionar o entrevistador correto no select
                     const select = document.getElementById('nomeEntrevistador');
                     const option = Array.from(select.options).find(opt => opt.value === dadosApp.entrevistador);
                     if (option) {
@@ -1398,7 +1387,6 @@
                         atualizarDashboard();
                     } else {
                         mostrarTela('tela-config-entrevistas');
-                        // 🔧 CORREÇÃO: Garantir que o select fique vazio ao mostrar a tela
                         const selectEntrevistas = document.getElementById('totalEntrevistas');
                         if (selectEntrevistas) {
                             selectEntrevistas.value = '';
@@ -1421,13 +1409,10 @@
             document.getElementById('total-realizadas-geral').textContent = dadosApp.entrevistasSalvas.length;
         }
 
-        // ALTERAÇÃO: Função atualizarDashboardHeader atualizada
         function atualizarDashboardHeader() {
-            // 📈 Total Geral
             const totalGeral = dadosApp.entrevistasSalvas.length;
             document.getElementById('header-total-geral').textContent = totalGeral;
             
-            // 🎯 Região Atual e ⏳ Restam
             const metaRegiao = dadosApp.totalEntrevistas;
             const realizadasRegiao = dadosApp.entrevistasRealizadas;
             const restamRegiao = metaRegiao - realizadasRegiao;
@@ -1435,20 +1420,17 @@
             document.getElementById('header-meta-regiao').textContent = metaRegiao;
             document.getElementById('header-restam-regiao').textContent = restamRegiao;
             
-            // 📝 Barra de Progresso das PERGUNTAS (APENAS na tela de pesquisa)
             const barra = document.getElementById('header-barra-progresso-perguntas');
             const textoBarra = document.getElementById('header-texto-barra');
             
             if (document.getElementById('tela-pesquisa').classList.contains('d-none') === false) {
                 const perguntasRespondidas = contarPerguntasRespondidas();
-                const totalPerguntas = modeloPerguntas.length;
+                const totalPerguntas = CONFIG_PESQUISA.perguntas.length;
                 const porcentagem = Math.round((perguntasRespondidas / totalPerguntas) * 100);
                 
-                // Atualizar barra
                 barra.style.width = porcentagem + '%';
                 textoBarra.textContent = `${perguntasRespondidas} de ${totalPerguntas} (${porcentagem}%)`;
                 
-                // Mudar cor baseada no progresso
                 barra.classList.remove('baixo', 'medio', 'alto');
                 if (porcentagem < 30) {
                     barra.classList.add('baixo');
@@ -1457,9 +1439,7 @@
                 } else {
                     barra.classList.add('alto');
                 }
-                
             } else {
-                // Fora da tela de pesquisa - resetar barra
                 barra.style.width = '0%';
                 textoBarra.textContent = '0 de 0 (0%)';
                 barra.classList.remove('baixo', 'medio', 'alto');
@@ -1468,7 +1448,7 @@
 
         function contarPerguntasRespondidas() {
             let respondidas = 0;
-            modeloPerguntas.forEach(pergunta => {
+            CONFIG_PESQUISA.perguntas.forEach(pergunta => {
                 const resposta = document.querySelector(`input[name="${pergunta.id}"]`);
                 if (resposta && resposta.value) {
                     respondidas++;
@@ -1489,7 +1469,6 @@
                 };
                 candidatosSelecionados = {};
                 
-                // ESCONDER botão limpar após limpar dados
                 esconderBotaoLimpar();
                 atualizarEstatisticasGerais();
                 atualizarDashboardHeader();
@@ -1497,8 +1476,6 @@
                 atualizarVisibilidadeBotoes();
                 
                 alert('✅ Dados limpos com sucesso!\n\n🗑️ Agora você pode excluir este arquivo HTML do celular.');
-                
-                // Recarregar a página
                 location.reload();
             }
         }
@@ -1518,7 +1495,6 @@
         function configurarEntrevistas() {
             const totalEntrevistas = parseInt(document.getElementById('totalEntrevistas').value);
             
-            // 🔧 CORREÇÃO: Verificar se o usuário selecionou uma opção válida
             if (!totalEntrevistas || totalEntrevistas <= 0) {
                 alert('Por favor, selecione a quantidade de entrevistas que você vai fazer.');
                 return;
@@ -1533,10 +1509,8 @@
             mostrarTela('tela-dashboard');
         }
 
-        // ALTERAÇÃO: Função atualizarDashboard simplificada (sem estatísticas)
         function atualizarDashboard() {
             document.getElementById('entrevistador-badge').textContent = dadosApp.entrevistador;
-            // REMOVIDAS AS ATUALIZAÇÕES DE ESTATÍSTICAS QUE NÃO EXISTEM MAIS
         }
 
         function iniciarNovaEntrevista() {
@@ -1545,7 +1519,6 @@
                 return;
             }
 
-            // Resetar candidatos selecionados para nova entrevista
             candidatosSelecionados = {};
             console.log("🔄 Objeto candidatosSelecionados RESETADO:", candidatosSelecionados);
 
@@ -1555,7 +1528,6 @@
             atualizarDashboardHeader();
         }
 
-        // FUNÇÃO PRINCIPAL DINÂMICA PARA CARREGAR PERGUNTAS
         function carregarPerguntas() {
             const container = document.getElementById('perguntas-container');
             container.innerHTML = '';
@@ -1563,7 +1535,7 @@
             console.log("🔄 Carregando perguntas...");
             console.log("📊 Objeto candidatosSelecionados:", candidatosSelecionados);
 
-            modeloPerguntas.forEach(pergunta => {
+            CONFIG_PESQUISA.perguntas.forEach(pergunta => {
                 const card = document.createElement('div');
                 card.className = 'pergunta-card';
                 
@@ -1571,7 +1543,6 @@
                 
                 pergunta.opcoes.forEach(opcao => {
                     if (opcao.especial === "input-texto") {
-                        // Para opção especial com input de texto
                         opcoesHTML += `
                             <div class="input-texto-opcao">
                                 <input type="text" 
@@ -1581,16 +1552,12 @@
                             </div>
                         `;
                     } else {
-                        // Verificar se esta opção deve ser desabilitada (para cenário de rejeição)
                         let desabilitado = false;
                         if (pergunta.cenarioRejeicao) {
                             const nomeCandidato = extrairNomeCandidato(opcao.texto);
                             desabilitado = candidatoEstaSelecionado(nomeCandidato);
                         }
                         
-                        console.log(`🔍 Carregando "${opcao.texto}" → Desabilitado: ${desabilitado}`);
-                        
-                        // Para opções normais de rádio
                         opcoesHTML += `
                             <button type="button" class="btn opcao-btn w-100 text-start mb-2" 
                                     onclick="selecionarOpcaoRadio(this, '${pergunta.id}', '${opcao.value}', '${opcao.texto}')"
@@ -1614,23 +1581,18 @@
             });
         }
 
-        // FUNÇÃO AUXILIAR PARA EXTRAIR APENAS O NOME DO CANDIDATO
         function extrairNomeCandidato(textoCompleto) {
-            // Remove o número e informações do vice (ex: "Fausto - 13 (Vice: Paulo Reis)" → "Fausto")
             const match = textoCompleto.match(/^([^-]+)/);
             return match ? match[0].trim() : textoCompleto;
         }
 
-        // FUNÇÃO AUXILIAR PARA NORMALIZAR TEXTO
         function normalizarTexto(str) {
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
         }
 
-        // Verifica se um candidato já foi selecionado em ALGUMA pergunta de intenção
         function candidatoEstaSelecionado(nomeCandidato) {
             const nomeNormalizado = normalizarTexto(nomeCandidato);
             
-            // Verificar em TODAS as perguntas de intenção
             for (let perguntaId in candidatosSelecionados) {
                 const candidatosDestaPergunta = candidatosSelecionados[perguntaId];
                 if (candidatosDestaPergunta && candidatosDestaPergunta.some(candidato => 
@@ -1642,7 +1604,6 @@
             return false;
         }
 
-        // FUNÇÃO PARA OBTER TODOS OS CANDIDATOS ÚNICOS DE TODAS AS PERGUNTAS
         function obterTodosCandidatosUnicos() {
             const todosCandidatos = [];
             
@@ -1652,35 +1613,28 @@
                 }
             }
             
-            // Remover duplicatas mantendo a ordem
             return [...new Set(todosCandidatos)];
         }
 
-        // FUNÇÃO DINÂMICA PARA SELECIONAR OPÇÕES DE RÁDIO
         function selecionarOpcaoRadio(elemento, perguntaId, valor, textoOpcao) {
             const container = elemento.closest('.opcoes-container');
             
-            // Remover seleção de todos os botões
             container.querySelectorAll('.opcao-btn').forEach(b => {
                 b.classList.remove('selected');
             });
             
-            // Limpar estilos dos inputs de texto
             container.querySelectorAll('.input-texto-opcao input').forEach(input => {
                 input.classList.remove('selected');
                 input.style.borderColor = '';
                 input.style.backgroundColor = '';
-                input.value = ''; // Limpar o valor do input
+                input.value = '';
             });
             
-            // Adicionar seleção ao botão clicado
             elemento.classList.add('selected');
             
-            // Remover input existente
             const inputExistente = document.querySelector(`input[name="${perguntaId}"]`);
             if (inputExistente) inputExistente.remove();
             
-            // Criar input hidden com o valor
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = perguntaId;
@@ -1688,36 +1642,26 @@
             input.required = true;
             container.appendChild(input);
             
-            // Se for um cenário de intenção, gerenciar o array de candidatos selecionados
-            const pergunta = modeloPerguntas.find(p => p.id === perguntaId);
+            const pergunta = CONFIG_PESQUISA.perguntas.find(p => p.id === perguntaId);
             if (pergunta && pergunta.cenarioIntencao) {
-                // Extrair apenas o nome do candidato
                 const nomeCandidato = extrairNomeCandidato(textoOpcao);
-                
-                // ATUALIZAR A PERGUNTA ESPECÍFICA - substituir toda a seleção anterior desta pergunta
                 candidatosSelecionados[perguntaId] = [nomeCandidato];
-                
                 console.log("✅ Candidato adicionado ao array da pergunta", perguntaId, ":", nomeCandidato);
                 console.log("📊 Array completo atualizado:", candidatosSelecionados);
                 console.log("🎯 Todos os candidatos únicos:", obterTodosCandidatosUnicos());
-                
-                // Atualizar TODAS as perguntas de rejeição
                 atualizarPerguntasRejeicao();
             }
             
             atualizarDashboardHeader();
         }
 
-        // FUNÇÃO DINÂMICA PARA SELECIONAR VIA INPUT DE TEXTO
         function selecionarInputTexto(elemento, perguntaId) {
             const container = elemento.closest('.opcoes-container');
             
-            // Remover seleção de todos os botões de rádio
             container.querySelectorAll('.opcao-btn').forEach(b => {
                 b.classList.remove('selected');
             });
             
-            // Remover estilos de outros inputs de texto
             container.querySelectorAll('.input-texto-opcao input').forEach(input => {
                 if (input !== elemento) {
                     input.classList.remove('selected');
@@ -1727,7 +1671,6 @@
                 }
             });
             
-            // Aplicar estilo ao input atual se tiver texto
             if (elemento.value.trim()) {
                 elemento.classList.add('selected');
                 elemento.style.borderColor = '#28a745';
@@ -1738,37 +1681,28 @@
                 elemento.style.backgroundColor = '';
             }
             
-            // Remover input existente
             const inputExistente = document.querySelector(`input[name="${perguntaId}"]`);
             if (inputExistente) inputExistente.remove();
             
             if (elemento.value.trim()) {
-                // Se tem texto, salvar APENAS o texto do input
                 const input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = perguntaId;
-                input.value = elemento.value.trim(); // Salva apenas o texto digitado
+                input.value = elemento.value.trim();
                 input.required = true;
                 container.appendChild(input);
                 
-                // Se for um cenário de intenção, gerenciar o array de candidatos selecionados
-                const pergunta = modeloPerguntas.find(p => p.id === perguntaId);
+                const pergunta = CONFIG_PESQUISA.perguntas.find(p => p.id === perguntaId);
                 if (pergunta && pergunta.cenarioIntencao) {
                     const nomeCandidato = elemento.value.trim();
-                    
-                    // ATUALIZAR A PERGUNTA ESPECÍFICA - substituir toda a seleção anterior desta pergunta
                     candidatosSelecionados[perguntaId] = [nomeCandidato];
-                    
                     console.log("✅ Candidato (input) adicionado ao array da pergunta", perguntaId, ":", nomeCandidato);
                     console.log("📊 Array completo atualizado:", candidatosSelecionados);
                     console.log("🎯 Todos os candidatos únicos:", obterTodosCandidatosUnicos());
-                    
-                    // Atualizar TODAS as perguntas de rejeição
                     atualizarPerguntasRejeicao();
                 }
             } else {
-                // Se o input foi limpo, remover candidatos desta pergunta
-                const pergunta = modeloPerguntas.find(p => p.id === perguntaId);
+                const pergunta = CONFIG_PESQUISA.perguntas.find(p => p.id === perguntaId);
                 if (pergunta && pergunta.cenarioIntencao) {
                     delete candidatosSelecionados[perguntaId];
                     console.log("🗑️ Candidatos removidos da pergunta", perguntaId);
@@ -1780,12 +1714,8 @@
             atualizarDashboardHeader();
         }
 
-        // FUNÇÃO PARA ATUALIZAR TODAS AS PERGUNTAS DE REJEIÇÃO
         function atualizarPerguntasRejeicao() {
-            // Encontrar TODAS as perguntas de rejeição
-            const perguntasRejeicao = modeloPerguntas.filter(p => p.cenarioRejeicao);
-            
-            // Obter todos os candidatos únicos de TODAS as perguntas de intenção
+            const perguntasRejeicao = CONFIG_PESQUISA.perguntas.filter(p => p.cenarioRejeicao);
             const todosCandidatos = obterTodosCandidatosUnicos();
             
             console.log("🔄 Atualizando rejeição. Candidatos a desabilitar:", todosCandidatos);
@@ -1794,18 +1724,14 @@
                 const container = document.getElementById(`opcoes-${perguntaRejeicao.id}`);
                 if (!container) return;
                 
-                // Atualizar apenas os botões da pergunta de rejeição
                 const botoes = container.querySelectorAll('.opcao-btn');
                 botoes.forEach(botao => {
                     const textoBotao = botao.textContent.replace(' 🔒', '').trim();
                     const nomeCandidato = extrairNomeCandidato(textoBotao);
                     
-                    // Verificar se deve desabilitar - se o candidato está em QUALQUER pergunta de intenção
                     const desabilitado = todosCandidatos.some(candidato => 
                         normalizarTexto(candidato) === normalizarTexto(nomeCandidato)
                     );
-                    
-                    console.log(`🔍 Verificando "${nomeCandidato}" → Desabilitado: ${desabilitado}`);
                     
                     if (desabilitado) {
                         botao.disabled = true;
@@ -1820,15 +1746,13 @@
             });
         }
 
-        // FUNÇÃO FINALIZAR ENTREVISTA COMPLETA
         function finalizarEntrevista() {
             const respostas = {};
             let valido = true;
 
             console.log('💾 === INICIANDO SALVAMENTO DA ENTREVISTA ===');
 
-            // VERIFICAR TODAS AS PERGUNTAS OBRIGATÓRIAS
-            modeloPerguntas.forEach(pergunta => {
+            CONFIG_PESQUISA.perguntas.forEach(pergunta => {
                 const resposta = document.querySelector(`input[name="${pergunta.id}"]`);
                 
                 console.log(`🔍 Verificando pergunta ${pergunta.id}:`, {
@@ -1847,8 +1771,7 @@
 
             if (!valido) return;
 
-            // SALVAR TODAS AS RESPOSTAS
-            modeloPerguntas.forEach(pergunta => {
+            CONFIG_PESQUISA.perguntas.forEach(pergunta => {
                 const resposta = document.querySelector(`input[name="${pergunta.id}"]`);
                 
                 if (resposta) {
@@ -1863,7 +1786,6 @@
             console.log('💾 Respostas salvas:', respostas);
             console.log('📊 Total de respostas salvas:', Object.keys(respostas).length);
 
-            // 🕒 CAPTURAR DATA/HORA NO FORMATO CORRETO dd/mm/aaaa - hh:mm:ss
             const dataHoraFormatada = formatarDataHora();
 
             const entrevista = {
@@ -1917,7 +1839,6 @@
             atualizarDashboardHeader();
             atualizarVisibilidadeBotoes();
             
-            // 🔧 CORREÇÃO: Garantir que o select fique vazio ao voltar para configuração
             const selectEntrevistas = document.getElementById('totalEntrevistas');
             if (selectEntrevistas) {
                 selectEntrevistas.value = '';
@@ -1930,16 +1851,12 @@
             });
             document.getElementById(telaId).classList.remove('d-none');
             
-            // Controlar visibilidade do título e cidade no header
             if (telaId === 'tela-pesquisa') {
-                // Na tela do formulário, esconder apenas título e cidade
                 document.body.classList.add('tela-formulario');
             } else {
-                // Nas outras telas, mostrar tudo normalmente
                 document.body.classList.remove('tela-formulario');
             }
             
-            // Se for a tela de divisão, preencher o select
             if (telaId === 'tela-divisao') {
                 const restantes = dadosApp.totalEntrevistas - dadosApp.entrevistasRealizadas;
                 const select = document.getElementById('quantidade-divisao');
@@ -1954,7 +1871,6 @@
                 }
             }
             
-            // Se for a tela de exportação Google, atualizar estatísticas
             if (telaId === 'tela-exportacao-google') {
                 atualizarEstatisticasEnvio();
                 document.getElementById('resultado-envio').classList.add('d-none');
@@ -1962,7 +1878,6 @@
                 document.getElementById('btn-google-forms').disabled = false;
             }
             
-            // 🔧 CORREÇÃO: Se for a tela de configuração, garantir que o select fique vazio
             if (telaId === 'tela-config-entrevistas') {
                 const selectEntrevistas = document.getElementById('totalEntrevistas');
                 if (selectEntrevistas) {
@@ -1998,18 +1913,15 @@
             atualizarDashboardHeader();
         }
 
-        // FUNÇÃO AUXILIAR PARA FAZER DOWNLOAD
         function fazerDownload(url, nomeArquivo) {
             const link = document.createElement('a');
             link.href = url;
             link.download = nomeArquivo;
             
-            // Disparar download
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             
-            // MOSTRAR botão limpar e ir para tela de exportação
             setTimeout(() => {
                 mostrarBotaoLimpar();
                 mostrarTela('tela-exportacao');
@@ -2022,25 +1934,20 @@
                 return;
             }
 
-            // Criar cabeçalho dinâmico baseado nas perguntas
-            const cabecalhoPerguntas = modeloPerguntas.map((p, index) => `p${index + 1}`);
+            const cabecalhoPerguntas = CONFIG_PESQUISA.perguntas.map((p, index) => `p${index + 1}`);
             const cabecalho = [...cabecalhoPerguntas, 'Data_Hora', 'Entrevistador', 'Status_Envio'];
 
             const linhas = dadosApp.entrevistasSalvas.map(entrevista => {
-                // Processar respostas dinamicamente
-                const respostas = modeloPerguntas.map((pergunta, index) => {
+                const respostas = CONFIG_PESQUISA.perguntas.map((pergunta, index) => {
                     return entrevista[pergunta.id] || '';
                 });
 
-                // Data e hora formatada
                 const dataHora = entrevista.data_hora ? entrevista.data_hora.replace(',', ' -') : '';
                 const entrevistador = entrevista.entrevistador || '';
                 const status = entrevistaJaEnviada(entrevista) ? 'ENVIADO' : 'PENDENTE';
 
-                // Montar linha
                 const linha = [...respostas, dataHora, entrevistador, status];
 
-                // Formatar CSV
                 return linha.map(valor => {
                     const valorString = String(valor);
                     if (valorString.includes(',') || valorString.includes('\n') || valorString.includes('"')) {
@@ -2050,16 +1957,12 @@
                 }).join(',');
             });
 
-            // Juntar cabeçalho e linhas
             csvData = [cabecalho.join(','), ...linhas].join('\n');
             
-            // Nome do arquivo personalizado: Pegar cidade do HTML + Entrevistador + Data
-            const elementoCidade = document.querySelector('.info-pesquisa p.mb-2');
-            const nomeCidade = elementoCidade ? elementoCidade.textContent.trim() : 'Pesquisa';
+            const nomeCidade = CONFIG_PESQUISA.cidade || 'Pesquisa';
             const nomeEntrevistador = dadosApp.entrevistador || 'Entrevistador';
             const dataAtual = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
             
-            // Limpar caracteres especiais para o arquivo
             const nomeCidadeLimpo = nomeCidade
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '')
@@ -2074,13 +1977,10 @@
             
             const nomeArquivo = `${nomeCidadeLimpo}_${nomeEntrevistadorLimpo}_${dataAtual}.csv`;
             
-            // Criar blob
             const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             
-            // Verificar se é mobile e suporta share API
             if (navigator.share && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) {
-                // Usar Web Share API para dispositivos móveis
                 const file = new File([blob], nomeArquivo, { type: 'text/csv' });
                 
                 navigator.share({
@@ -2095,17 +1995,14 @@
                 })
                 .catch((error) => {
                     console.log('Erro ao compartilhar:', error);
-                    // Fallback para download se o compartilhamento falhar
                     fazerDownload(url, nomeArquivo);
                 });
                 
             } else {
-                // Fallback para desktop ou dispositivos sem suporte a share
                 fazerDownload(url, nomeArquivo);
             }
         }
 
-        // 🔍 FUNÇÃO PARA TESTAR CONEXÃO COM GOOGLE FORMS
         async function testarConexaoGoogleForms() {
             if (!navigator.onLine) {
                 alert('📡 Sem conexão com internet!');
@@ -2117,9 +2014,8 @@
             resultadoDiv.innerHTML = '<div class="alert alert-info">🔍 Testando conexão com o Servidor...</div>';
 
             try {
-                // Testar se o formulário está acessível
                 const testUrl = CONFIG_GOOGLE_FORMS.url.replace('/formResponse', '/viewform');
-                const response = await fetch(testUrl, { mode: 'no-cors' });
+                await fetch(testUrl, { mode: 'no-cors' });
                 
                 resultadoDiv.innerHTML = `
                     <div class="alert alert-success">
@@ -2147,7 +2043,6 @@
             }
         }
 
-        // 🚀 FUNÇÃO: ENVIAR PARA GOOGLE FORMS - MÉTODO SIMPLES POR POSIÇÃO
         async function enviarParaGoogleForms() {
             if (dadosApp.entrevistasSalvas.length === 0) {
                 alert('Nenhuma entrevista para enviar.');
@@ -2159,7 +2054,6 @@
                 return;
             }
 
-            // Filtrar apenas entrevistas NÃO enviadas
             const entrevistasNaoEnviadas = dadosApp.entrevistasSalvas.filter(
                 entrevista => !entrevistaJaEnviada(entrevista)
             );
@@ -2169,7 +2063,6 @@
                 return;
             }
 
-            // Mostrar progresso
             document.getElementById('progresso-envio').classList.remove('d-none');
             document.getElementById('btn-google-forms').disabled = true;
 
@@ -2194,11 +2087,9 @@
                     console.log('🔄 === INICIANDO ENVIO POR POSIÇÃO ===');
                     console.log('📊 Entrevista completa:', entrevista);
                     
-                    // ✅ MÉTODO SIMPLES: POSIÇÃO X DO ENTRY ID = POSIÇÃO X DA RESPOSTA
                     console.log('🔍 === ENVIANDO POR POSIÇÃO ===');
                     
-                    // Para cada pergunta na ordem do modeloPerguntas
-                    modeloPerguntas.forEach((pergunta, index) => {
+                    CONFIG_PESQUISA.perguntas.forEach((pergunta, index) => {
                         const resposta = entrevista[pergunta.id];
                         const entryId = CONFIG_GOOGLE_FORMS.entryIds[index];
                         
@@ -2214,8 +2105,7 @@
                         }
                     });
 
-                    // Data/hora e entrevistador (últimas 2 posições)
-                    const totalPerguntas = modeloPerguntas.length;
+                    const totalPerguntas = CONFIG_PESQUISA.perguntas.length;
                     const dataHoraEntry = CONFIG_GOOGLE_FORMS.entryIds[totalPerguntas];
                     const entrevistadorEntry = CONFIG_GOOGLE_FORMS.entryIds[totalPerguntas + 1];
                     
@@ -2234,24 +2124,20 @@
                         console.log(`   ${key} = "${value}"`);
                     });
 
-                    // ✅ ENVIO
                     await fetch(CONFIG_GOOGLE_FORMS.url, {
                         method: 'POST',
                         body: formData,
                         mode: 'no-cors'
                     });
 
-                    // Se chegou aqui, foi enviado com sucesso
                     marcarComoEnviado(entrevista);
                     enviados++;
                     
-                    // Atualizar progresso
                     const porcentagem = (enviados / total) * 100;
                     document.getElementById('barra-progresso-envio').style.width = porcentagem + '%';
                     document.getElementById('texto-progresso-envio').textContent = 
                         `Enviando ${enviados} de ${total} (apenas pendentes)`;
                     
-                    // Pausa para evitar sobrecarga
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     
                 } catch (error) {
@@ -2263,7 +2149,6 @@
                 }
             }
 
-            // Mostrar resultado
             document.getElementById('progresso-envio').classList.add('d-none');
             document.getElementById('btn-google-forms').disabled = false;
             
